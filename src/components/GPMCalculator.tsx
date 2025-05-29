@@ -15,6 +15,9 @@ interface FlowReading {
   duration: number;
   volume: number;
   gpm: number;
+  operatorName: string;
+  deepweel9: number;
+  deepweel10: number;
   notes?: string;
 }
 
@@ -25,6 +28,9 @@ const GPMCalculator = () => {
   const [gpm, setGPM] = useState<number>(0);
   const [flowLog, setFlowLog] = useState<FlowReading[]>([]);
   const [notes, setNotes] = useState('');
+  const [operatorName, setOperatorName] = useState('');
+  const [deepweel9, setDeepweel9] = useState<number>(0);
+  const [deepweel10, setDeepweel10] = useState<number>(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { toast } = useToast();
 
@@ -73,6 +79,10 @@ const GPMCalculator = () => {
 
   const stopStopwatch = () => {
     setIsRunning(false);
+    // Auto-log when stopping the stopwatch
+    if (time > 0) {
+      autoLogReading();
+    }
   };
 
   const resetStopwatch = () => {
@@ -81,11 +91,15 @@ const GPMCalculator = () => {
     setGPM(0);
   };
 
-  const logReading = async () => {
+  const autoLogReading = async () => {
     if (time === 0) {
+      return;
+    }
+
+    if (!operatorName.trim()) {
       toast({
         title: "Error",
-        description: "Please take a timing measurement first",
+        description: "Please enter operator name before stopping the timer",
         variant: "destructive"
       });
       return;
@@ -96,6 +110,9 @@ const GPMCalculator = () => {
       duration: time / 100, // Convert to seconds
       volume,
       gpm,
+      operatorName: operatorName.trim(),
+      deepweel9,
+      deepweel10,
       notes: notes || undefined
     };
 
@@ -106,13 +123,13 @@ const GPMCalculator = () => {
       resetStopwatch();
       toast({
         title: "Success",
-        description: "Flow reading logged successfully"
+        description: "Reading auto-logged successfully"
       });
     } catch (error) {
-      console.error('Error logging reading:', error);
+      console.error('Error auto-logging reading:', error);
       toast({
         title: "Error",
-        description: "Failed to log reading",
+        description: "Failed to auto-log reading",
         variant: "destructive"
       });
     }
@@ -142,14 +159,17 @@ const GPMCalculator = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Timestamp', 'Duration (seconds)', 'Volume', 'GPM', 'Notes'];
+    const headers = ['Timestamp', 'Operator Name', 'Duration (seconds)', 'Volume', 'GPM', 'Deepweel 9', 'Deepweel 10', 'Notes'];
     const csvContent = [
       headers.join(','),
       ...flowLog.map(reading => [
         reading.timestamp,
+        reading.operatorName,
         reading.duration,
         reading.volume,
         reading.gpm,
+        reading.deepweel9,
+        reading.deepweel10,
         reading.notes || ''
       ].join(','))
     ].join('\n');
@@ -238,7 +258,7 @@ const GPMCalculator = () => {
                     variant="destructive"
                   >
                     <Square className="h-4 w-4 mr-2" />
-                    Stop
+                    Stop & Auto-Log
                   </Button>
                   <Button onClick={resetStopwatch} variant="outline">
                     <RotateCcw className="h-4 w-4 mr-2" />
@@ -268,19 +288,60 @@ const GPMCalculator = () => {
             {/* Input and Controls Card */}
             <Card className={isDarkMode ? 'bg-gray-800 border-gray-700' : ''}>
               <CardHeader>
-                <CardTitle className={isDarkMode ? 'text-white' : ''}>Log Reading</CardTitle>
+                <CardTitle className={isDarkMode ? 'text-white' : ''}>Reading Inputs</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="volume" className={isDarkMode ? 'text-gray-300' : ''}>
-                    Volume (gallons)
+                  <Label htmlFor="operatorName" className={isDarkMode ? 'text-gray-300' : ''}>
+                    Operator Name *
                   </Label>
                   <Input
-                    id="volume"
+                    id="operatorName"
+                    value={operatorName}
+                    onChange={(e) => setOperatorName(e.target.value)}
+                    placeholder="Enter operator name"
+                    className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="volume" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Volume (gallons)
+                    </Label>
+                    <Input
+                      id="volume"
+                      type="number"
+                      value={volume}
+                      onChange={(e) => setVolume(Number(e.target.value))}
+                      placeholder="Enter volume"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="deepweel9" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Deepweel 9
+                    </Label>
+                    <Input
+                      id="deepweel9"
+                      type="number"
+                      value={deepweel9}
+                      onChange={(e) => setDeepweel9(Number(e.target.value))}
+                      placeholder="Enter deepweel 9"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="deepweel10" className={isDarkMode ? 'text-gray-300' : ''}>
+                    Deepweel 10
+                  </Label>
+                  <Input
+                    id="deepweel10"
                     type="number"
-                    value={volume}
-                    onChange={(e) => setVolume(Number(e.target.value))}
-                    placeholder="Enter volume"
+                    value={deepweel10}
+                    onChange={(e) => setDeepweel10(Number(e.target.value))}
+                    placeholder="Enter deepweel 10"
                     className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                   />
                 </div>
@@ -296,15 +357,10 @@ const GPMCalculator = () => {
                     className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                   />
                 </div>
-                <div className="flex space-x-2">
-                  <Button onClick={logReading} className="flex-1">
-                    Log Reading
-                  </Button>
-                  <Button onClick={sendToAdmin} variant="outline" className="flex-1">
-                    <Send className="h-4 w-4 mr-2" />
-                    Send to Admin
-                  </Button>
-                </div>
+                <Button onClick={sendToAdmin} variant="outline" className="w-full">
+                  <Send className="h-4 w-4 mr-2" />
+                  Send to Admin
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -344,12 +400,15 @@ const GPMCalculator = () => {
                         }`}
                       >
                         <div className="flex justify-between items-start">
-                          <div>
+                          <div className="flex-1">
                             <div className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                              {reading.gpm} GPM
+                              {reading.gpm} GPM - {reading.operatorName}
                             </div>
                             <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                               Duration: {reading.duration}s | Volume: {reading.volume} gal
+                            </div>
+                            <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              Deepweel 9: {reading.deepweel9} | Deepweel 10: {reading.deepweel10}
                             </div>
                             {reading.notes && (
                               <div className={`text-sm mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
