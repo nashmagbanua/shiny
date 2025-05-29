@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Play, Square, RotateCcw, Send, Download, Trash2, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -307,20 +306,20 @@ const GPMCalculator = () => {
                     required
                   />
                 </div>
+                <div>
+                  <Label htmlFor="deepweel" className={isDarkMode ? 'text-gray-300' : ''}>
+                    Deepweel
+                  </Label>
+                  <Input
+                    id="deepweel"
+                    type="number"
+                    value={deepweel}
+                    onChange={(e) => setDeepweel(e.target.value)}
+                    placeholder="Enter deepweel"
+                    className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="deepweel" className={isDarkMode ? 'text-gray-300' : ''}>
-                      Deepweel
-                    </Label>
-                    <Input
-                      id="deepweel"
-                      type="number"
-                      value={deepweel}
-                      onChange={(e) => setDeepweel(e.target.value)}
-                      placeholder="Enter deepweel"
-                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                    />
-                  </div>
                   <div>
                     <Label htmlFor="deepweel9" className={isDarkMode ? 'text-gray-300' : ''}>
                       Deepweel 9
@@ -334,19 +333,19 @@ const GPMCalculator = () => {
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="deepweel10" className={isDarkMode ? 'text-gray-300' : ''}>
-                    Deepweel 10
-                  </Label>
-                  <Input
-                    id="deepweel10"
-                    type="number"
-                    value={deepweel10}
-                    onChange={(e) => setDeepweel10(e.target.value)}
-                    placeholder="Enter deepweel 10"
-                    className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                  />
+                  <div>
+                    <Label htmlFor="deepweel10" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Deepweel 10
+                    </Label>
+                    <Input
+                      id="deepweel10"
+                      type="number"
+                      value={deepweel10}
+                      onChange={(e) => setDeepweel10(e.target.value)}
+                      placeholder="Enter deepweel 10"
+                      className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
+                    />
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="notes" className={isDarkMode ? 'text-gray-300' : ''}>
@@ -360,10 +359,6 @@ const GPMCalculator = () => {
                     className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                   />
                 </div>
-                <Button onClick={sendToAdmin} variant="outline" className="w-full">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send to Admin
-                </Button>
               </CardContent>
             </Card>
           </div>
@@ -377,6 +372,10 @@ const GPMCalculator = () => {
                     Flow Readings ({flowLog.length})
                   </CardTitle>
                   <div className="flex space-x-2">
+                    <Button onClick={sendToAdmin} variant="outline" size="sm">
+                      <Send className="h-4 w-4 mr-2" />
+                      Send to Admin
+                    </Button>
                     <Button onClick={exportToCSV} variant="outline" size="sm">
                       <Download className="h-4 w-4 mr-2" />
                       Export CSV
