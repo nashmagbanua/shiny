@@ -13,7 +13,7 @@ interface FlowReading {
   id: string;
   timestamp: string;
   duration: number;
-  volume: number;
+  deepweel: number;
   gpm: number;
   operatorName: string;
   deepweel9: number;
@@ -24,13 +24,13 @@ interface FlowReading {
 const GPMCalculator = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [volume, setVolume] = useState<number>(0);
+  const [deepweel, setDeepweel] = useState<string>('');
   const [gpm, setGPM] = useState<number>(0);
   const [flowLog, setFlowLog] = useState<FlowReading[]>([]);
   const [notes, setNotes] = useState('');
   const [operatorName, setOperatorName] = useState('');
-  const [deepweel9, setDeepweel9] = useState<number>(0);
-  const [deepweel10, setDeepweel10] = useState<number>(0);
+  const [deepweel9, setDeepweel9] = useState<string>('');
+  const [deepweel10, setDeepweel10] = useState<string>('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { toast } = useToast();
 
@@ -108,11 +108,11 @@ const GPMCalculator = () => {
     const reading: Omit<FlowReading, 'id'> = {
       timestamp: new Date().toISOString(),
       duration: time / 100, // Convert to seconds
-      volume,
+      deepweel: Number(deepweel) || 0,
       gpm,
       operatorName: operatorName.trim(),
-      deepweel9,
-      deepweel10,
+      deepweel9: Number(deepweel9) || 0,
+      deepweel10: Number(deepweel10) || 0,
       notes: notes || undefined
     };
 
@@ -120,6 +120,9 @@ const GPMCalculator = () => {
       await addDoc(collection(db, 'flowReadings'), reading);
       await loadFlowLog();
       setNotes('');
+      setDeepweel('');
+      setDeepweel9('');
+      setDeepweel10('');
       resetStopwatch();
       toast({
         title: "Success",
@@ -159,14 +162,14 @@ const GPMCalculator = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Timestamp', 'Operator Name', 'Duration (seconds)', 'Volume', 'GPM', 'Deepweel 9', 'Deepweel 10', 'Notes'];
+    const headers = ['Timestamp', 'Operator Name', 'Duration (seconds)', 'Deepweel', 'GPM', 'Deepweel 9', 'Deepweel 10', 'Notes'];
     const csvContent = [
       headers.join(','),
       ...flowLog.map(reading => [
         reading.timestamp,
         reading.operatorName,
         reading.duration,
-        reading.volume,
+        reading.deepweel,
         reading.gpm,
         reading.deepweel9,
         reading.deepweel10,
@@ -306,15 +309,15 @@ const GPMCalculator = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="volume" className={isDarkMode ? 'text-gray-300' : ''}>
-                      Volume (gallons)
+                    <Label htmlFor="deepweel" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Deepweel
                     </Label>
                     <Input
-                      id="volume"
+                      id="deepweel"
                       type="number"
-                      value={volume}
-                      onChange={(e) => setVolume(Number(e.target.value))}
-                      placeholder="Enter volume"
+                      value={deepweel}
+                      onChange={(e) => setDeepweel(e.target.value)}
+                      placeholder="Enter deepweel"
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                   </div>
@@ -326,7 +329,7 @@ const GPMCalculator = () => {
                       id="deepweel9"
                       type="number"
                       value={deepweel9}
-                      onChange={(e) => setDeepweel9(Number(e.target.value))}
+                      onChange={(e) => setDeepweel9(e.target.value)}
                       placeholder="Enter deepweel 9"
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
@@ -340,7 +343,7 @@ const GPMCalculator = () => {
                     id="deepweel10"
                     type="number"
                     value={deepweel10}
-                    onChange={(e) => setDeepweel10(Number(e.target.value))}
+                    onChange={(e) => setDeepweel10(e.target.value)}
                     placeholder="Enter deepweel 10"
                     className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                   />
@@ -405,7 +408,7 @@ const GPMCalculator = () => {
                               {reading.gpm} GPM - {reading.operatorName}
                             </div>
                             <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              Duration: {reading.duration}s | Volume: {reading.volume} gal
+                              Duration: {reading.duration}s | Deepweel: {reading.deepweel}
                             </div>
                             <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                               Deepweel 9: {reading.deepweel9} | Deepweel 10: {reading.deepweel10}
