@@ -1,8 +1,8 @@
 
-import GPMCalculator from '@/components/GPMCalculator';
+import ChemicalInventory from '@/components/ChemicalInventory';
 
 const Index = () => {
-  return <GPMCalculator />;
+  return <ChemicalInventory />;
 };
 
 export default Index;
