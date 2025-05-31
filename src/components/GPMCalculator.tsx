@@ -12,24 +12,22 @@ interface FlowReading {
   id: string;
   timestamp: string;
   duration: number;
-  deepweel: number;
   gpm: number;
   operatorName: string;
-  deepweel9: number;
-  deepweel10: number;
+  deepwell9: number;
+  deepwell10: number;
   notes?: string;
 }
 
 const GPMCalculator = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [deepweel, setDeepweel] = useState<string>('');
   const [gpm, setGPM] = useState<number>(0);
   const [flowLog, setFlowLog] = useState<FlowReading[]>([]);
   const [notes, setNotes] = useState('');
   const [operatorName, setOperatorName] = useState('');
-  const [deepweel9, setDeepweel9] = useState<string>('');
-  const [deepweel10, setDeepweel10] = useState<string>('');
+  const [deepwell9, setDeepwell9] = useState<string>('');
+  const [deepwell10, setDeepwell10] = useState<string>('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { toast } = useToast();
 
@@ -107,11 +105,10 @@ const GPMCalculator = () => {
     const reading: Omit<FlowReading, 'id'> = {
       timestamp: new Date().toISOString(),
       duration: time / 100, // Convert to seconds
-      deepweel: Number(deepweel) || 0,
       gpm,
       operatorName: operatorName.trim(),
-      deepweel9: Number(deepweel9) || 0,
-      deepweel10: Number(deepweel10) || 0,
+      deepwell9: Number(deepwell9) || 0,
+      deepwell10: Number(deepwell10) || 0,
       notes: notes || undefined
     };
 
@@ -119,9 +116,8 @@ const GPMCalculator = () => {
       await addDoc(collection(db, 'flowReadings'), reading);
       await loadFlowLog();
       setNotes('');
-      setDeepweel('');
-      setDeepweel9('');
-      setDeepweel10('');
+      setDeepwell9('');
+      setDeepwell10('');
       resetStopwatch();
       toast({
         title: "Success",
@@ -161,17 +157,16 @@ const GPMCalculator = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Timestamp', 'Operator Name', 'Duration (seconds)', 'Deepweel', 'GPM', 'Deepweel 9', 'Deepweel 10', 'Notes'];
+    const headers = ['Timestamp', 'Operator Name', 'Duration (seconds)', 'GPM', 'Deepwell 9', 'Deepwell 10', 'Notes'];
     const csvContent = [
       headers.join(','),
       ...flowLog.map(reading => [
         reading.timestamp,
         reading.operatorName,
         reading.duration,
-        reading.deepweel,
         reading.gpm,
-        reading.deepweel9,
-        reading.deepweel10,
+        reading.deepwell9,
+        reading.deepwell10,
         reading.notes || ''
       ].join(','))
     ].join('\n');
@@ -306,43 +301,30 @@ const GPMCalculator = () => {
                     required
                   />
                 </div>
-                <div>
-                  <Label htmlFor="deepweel" className={isDarkMode ? 'text-gray-300' : ''}>
-                    Deepweel
-                  </Label>
-                  <Input
-                    id="deepweel"
-                    type="number"
-                    value={deepweel}
-                    onChange={(e) => setDeepweel(e.target.value)}
-                    placeholder="Enter deepweel"
-                    className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
-                  />
-                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="deepweel9" className={isDarkMode ? 'text-gray-300' : ''}>
-                      Deepweel 9
+                    <Label htmlFor="deepwell9" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Deepwell 9
                     </Label>
                     <Input
-                      id="deepweel9"
+                      id="deepwell9"
                       type="number"
-                      value={deepweel9}
-                      onChange={(e) => setDeepweel9(e.target.value)}
-                      placeholder="Enter deepweel 9"
+                      value={deepwell9}
+                      onChange={(e) => setDeepwell9(e.target.value)}
+                      placeholder="Enter deepwell 9"
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="deepweel10" className={isDarkMode ? 'text-gray-300' : ''}>
-                      Deepweel 10
+                    <Label htmlFor="deepwell10" className={isDarkMode ? 'text-gray-300' : ''}>
+                      Deepwell 10
                     </Label>
                     <Input
-                      id="deepweel10"
+                      id="deepwell10"
                       type="number"
-                      value={deepweel10}
-                      onChange={(e) => setDeepweel10(e.target.value)}
-                      placeholder="Enter deepweel 10"
+                      value={deepwell10}
+                      onChange={(e) => setDeepwell10(e.target.value)}
+                      placeholder="Enter deepwell 10"
                       className={isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''}
                     />
                   </div>
@@ -407,10 +389,10 @@ const GPMCalculator = () => {
                               {reading.gpm} GPM - {reading.operatorName}
                             </div>
                             <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              Duration: {reading.duration}s | Deepweel: {reading.deepweel}
+                              Duration: {reading.duration}s
                             </div>
                             <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              Deepweel 9: {reading.deepweel9} | Deepweel 10: {reading.deepweel10}
+                              Deepwell 9: {reading.deepwell9} | Deepwell 10: {reading.deepwell10}
                             </div>
                             {reading.notes && (
                               <div className={`text-sm mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
