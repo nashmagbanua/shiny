@@ -1,4 +1,3 @@
-
 export interface Chemical {
   id: string;
   dateReceived: string;
@@ -8,7 +7,7 @@ export interface Chemical {
   supplier: string;
   expiryDate: string;
   storageLocation: string;
-  remarks: string;
+  remarks?: string;
   currentBalance: number;
 }
 
@@ -19,7 +18,7 @@ export interface ChemicalUsage {
   quantityUsed: number;
   dateUsed: string;
   personInCharge: string;
-  remarks: string;
+  remarks?: string;
 }
 
 export interface ChemicalInventoryState {
