@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,7 +46,19 @@ export const AddChemicalForm: React.FC<AddChemicalFormProps> = ({ onSubmit, onCa
   const selectedUnit = watch('unit');
 
   const onFormSubmit = (data: ChemicalFormData) => {
-    onSubmit(data);
+    // Ensure all required fields are present and properly typed
+    const chemicalData: Omit<Chemical, 'id' | 'currentBalance'> = {
+      dateReceived: data.dateReceived,
+      name: data.name,
+      quantity: data.quantity,
+      unit: data.unit,
+      supplier: data.supplier,
+      expiryDate: data.expiryDate,
+      storageLocation: data.storageLocation,
+      remarks: data.remarks,
+    };
+    
+    onSubmit(chemicalData);
     reset();
     onCancel();
   };

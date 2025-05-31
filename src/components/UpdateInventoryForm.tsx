@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,10 +49,18 @@ export const UpdateInventoryForm: React.FC<UpdateInventoryFormProps> = ({
 
   const onFormSubmit = (data: UsageFormData) => {
     const chemicalName = chemicals.find(c => c.id === data.chemicalId)?.name || '';
-    onSubmit({
-      ...data,
+    
+    // Ensure all required fields are present and properly typed
+    const usageData: Omit<ChemicalUsage, 'id'> = {
+      chemicalId: data.chemicalId,
       chemicalName,
-    });
+      quantityUsed: data.quantityUsed,
+      dateUsed: data.dateUsed,
+      personInCharge: data.personInCharge,
+      remarks: data.remarks,
+    };
+    
+    onSubmit(usageData);
     reset();
     onCancel();
   };
